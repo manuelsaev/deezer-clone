@@ -19,6 +19,15 @@
                 "operationId": "c7bb21a0d87049e161b8e4c9b0d909f2",
                 "parameters": [
                     {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Nombre del usuario",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "email",
                         "in": "query",
                         "description": "Correo del usuario",
@@ -37,15 +46,6 @@
                         }
                     },
                     {
-                        "name": "name",
-                        "in": "query",
-                        "description": "Nombre del usuario",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
                         "name": "country",
                         "in": "query",
                         "description": "País del usuario",
@@ -58,6 +58,60 @@
                 "responses": {
                     "200": {
                         "description": "Registrar usuario y obtener sus datos."
+                    },
+                    "default": {
+                        "description": "Ha ocurrido un error."
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Autenticar usuario",
+                "operationId": "dd51a484b7fa0f97c7680fdbde14cf5f",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Correo del usuario",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "description": "Contraseña del usuario",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Autenticar usuario y obtener sus datos."
+                    },
+                    "default": {
+                        "description": "Ha ocurrido un error."
+                    }
+                }
+            }
+        },
+        "/api/auth/logout": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Cerrar sesión de usuario",
+                "operationId": "90a8411aa8f7315b8ce0ebafbbbe580d",
+                "responses": {
+                    "200": {
+                        "description": "Cerrar sesión de usuario."
                     },
                     "default": {
                         "description": "Ha ocurrido un error."

@@ -72,11 +72,40 @@ class AuthController extends Controller
                    'name' => $user->name,
                    'email' => $user->email
                 ],
-               'token' => $user->createToken($user->id)->plainTextToken
+               'token' => $user->createToken('authToken')->plainTextToken
              ],
             ], Response::HTTP_OK);
     }
 
+    /**
+    * @OA\Post(
+    *     path="/api/auth/login",
+    *     summary="Autenticar usuario",
+    *     tags={"Auth"},
+    * @OA\Parameter(
+    *   name="email",
+    *   in="query",
+    *   description="Correo del usuario",
+    *   required=true,
+    * @OA\Schema(type="string")
+    * ),
+    * @OA\Parameter(
+    *   name="password",
+    *   in="query",
+    *   description="Contraseña del usuario",
+    *   required=true,
+    *   @OA\Schema(type="string")
+    * ),
+    *     @OA\Response(
+    *         response=200,
+    *         description="Autenticar usuario y obtener sus datos."
+    *     ),
+    *     @OA\Response(
+    *         response="default",
+    *         description="Ha ocurrido un error."
+    *     )
+    * )
+    */
     public function login(LoginAuthRequest $request): JsonResponse
     {
         $user = User::where('email', $request->email)->first();
@@ -95,15 +124,31 @@ class AuthController extends Controller
                    'name' => $user->name,
                    'email' => $user->email
                 ],
-               'token' => $user->createToken()->plainTextToken
+               'token' => $user->createToken('authToken')->plainTextToken
              ],
             ], Response::HTTP_OK);
     }
 
-
+    /**
+    * @OA\Get(
+    *     path="/api/auth/logout",
+    *     summary="Cerrar sesión de usuario",
+    *     tags={"Auth"},
+    *     @OA\Response(
+    *         response=200,
+    *         description="Cerrar sesión de usuario."
+    *     ),
+    *     @OA\Response(
+    *         response="default",
+    *         description="Ha ocurrido un error."
+    *     )
+    * )
+    */
     public function logout(): JsonResponse
     {
-        auth()->user()->tokens()->delete();
+        if(isset(auth()->user()->id)){
+            auth()->user()->tokens()->delete();
+        }
 
         return response()->json([
             'message' => 'Ha cerrado sesión.'
