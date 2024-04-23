@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "title": "API Deezer Clone",
-        "version": "1.0"
+        "version": "1.1"
     },
     "servers": [
         {
@@ -72,51 +72,78 @@
                 ],
                 "summary": "Autenticar usuario",
                 "operationId": "dd51a484b7fa0f97c7680fdbde14cf5f",
-                "parameters": [
-                    {
-                        "name": "email",
-                        "in": "query",
-                        "description": "Correo del usuario",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "password",
-                        "in": "query",
-                        "description": "Contraseña del usuario",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "description": "Email",
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "description": "Contraseña",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
                         }
                     }
-                ],
+                },
                 "responses": {
                     "200": {
                         "description": "Autenticar usuario y obtener sus datos."
                     },
                     "default": {
                         "description": "Ha ocurrido un error."
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not Found"
                     }
                 }
             }
         },
         "/api/auth/logout": {
-            "get": {
+            "post": {
                 "tags": [
                     "Auth"
                 ],
                 "summary": "Cerrar sesión de usuario",
-                "operationId": "90a8411aa8f7315b8ce0ebafbbbe580d",
+                "operationId": "df9bdc6c7a6d9f20b983526b2ec0f698",
                 "responses": {
                     "200": {
                         "description": "Cerrar sesión de usuario."
                     },
                     "default": {
                         "description": "Ha ocurrido un error."
+                    },
+                    "401": {
+                        "description": "Unauthorized"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
             }
         }
     }

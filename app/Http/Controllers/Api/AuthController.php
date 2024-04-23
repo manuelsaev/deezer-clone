@@ -10,11 +10,19 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\PersonalAccessToken;
 
 /**
-* @OA\Info(title="API Deezer Clone", version="1.0")
+* @OA\Info(title="API Deezer Clone", version="1.1")
 *
 * @OA\Server(url="http://localhost:8000")
+*
+* @OA\SecurityScheme(
+ *     securityScheme="bearerAuth",
+ *     type="http",
+ *     scheme="bearer",
+ *     bearerFormat="JWT",
+* )
 */
 class AuthController extends Controller
 {
@@ -69,10 +77,11 @@ class AuthController extends Controller
                'data' => [
                'attributes'=> [
                    'id' => $user->id,
+                   'country' => $user->country,
                    'name' => $user->name,
                    'email' => $user->email
                 ],
-               'token' => $user->createToken('authToken')->plainTextToken
+               'token' => $user->createToken($user->id)->plainTextToken
              ],
             ], Response::HTTP_OK);
     }
@@ -82,20 +91,26 @@ class AuthController extends Controller
     *     path="/api/auth/login",
     *     summary="Autenticar usuario",
     *     tags={"Auth"},
-    * @OA\Parameter(
-    *   name="email",
-    *   in="query",
-    *   description="Correo del usuario",
-    *   required=true,
-    * @OA\Schema(type="string")
-    * ),
-    * @OA\Parameter(
-    *   name="password",
-    *   in="query",
-    *   description="Contraseña del usuario",
-    *   required=true,
-    *   @OA\Schema(type="string")
-    * ),
+    *      @OA\RequestBody(
+    *          required=true,
+    *          @OA\MediaType(mediaType="multipart/form-data",
+    *              @OA\Schema(
+    *           required={"email","password"},
+    *           @OA\Property(
+    *               property="email",
+    *               type="string",
+    *               description="Email"
+    *           ),
+    *           @OA\Property(
+    *               property="password",
+    *               type="string",
+    *               description="Contraseña"
+    *           ),
+    *             )
+    *         )
+    *      ),
+    *
+    *
     *     @OA\Response(
     *         response=200,
     *         description="Autenticar usuario y obtener sus datos."
@@ -103,7 +118,9 @@ class AuthController extends Controller
     *     @OA\Response(
     *         response="default",
     *         description="Ha ocurrido un error."
-    *     )
+    *     ),
+    *     @OA\Response(response=401, description="Unauthorized"),
+    *     @OA\Response(response=404, description="Not Found"),
     * )
     */
     public function login(LoginAuthRequest $request): JsonResponse
@@ -121,19 +138,21 @@ class AuthController extends Controller
                'data' => [
                'attributes'=> [
                    'id' => $user->id,
+                   'country' => $user->country,
                    'name' => $user->name,
                    'email' => $user->email
                 ],
-               'token' => $user->createToken('authToken')->plainTextToken
+               'token' => $user->createToken($user->id)->plainTextToken
              ],
             ], Response::HTTP_OK);
     }
 
     /**
-    * @OA\Get(
+    * @OA\Post(
     *     path="/api/auth/logout",
     *     summary="Cerrar sesión de usuario",
     *     tags={"Auth"},
+    *     security={{"bearerAuth":{}}},
     *     @OA\Response(
     *         response=200,
     *         description="Cerrar sesión de usuario."
@@ -141,14 +160,13 @@ class AuthController extends Controller
     *     @OA\Response(
     *         response="default",
     *         description="Ha ocurrido un error."
-    *     )
+    *     ),
+    *     @OA\Response(response=401, description="Unauthorized"),
     * )
     */
-    public function logout(): JsonResponse
+    public function logout(Request $request): JsonResponse
     {
-        if(isset(auth()->user()->id)){
-            auth()->user()->tokens()->delete();
-        }
+        $request->user()->currentAccessToken()->delete();
 
         return response()->json([
             'message' => 'Ha cerrado sesión.'
