@@ -31,34 +31,34 @@ class AuthController extends Controller
     *     path="/api/auth/register",
     *     summary="Registrar usuario",
     *     tags={"Auth"},
-    * @OA\Parameter(
-    *   name="name",
-    *   in="query",
-    *   description="Nombre del usuario",
-    *   required=true,
-    *   @OA\Schema(type="string")
-    * ),
-    * @OA\Parameter(
-    *   name="email",
-    *   in="query",
-    *   description="Correo del usuario",
-    *   required=true,
-    * @OA\Schema(type="string")
-    * ),
-    * @OA\Parameter(
-    *   name="password",
-    *   in="query",
-    *   description="Contraseña del usuario",
-    *   required=true,
-    *   @OA\Schema(type="string")
-    * ),
-    * @OA\Parameter(
-    *   name="country",
-    *   in="query",
-    *   description="País del usuario",
-    *   required=true,
-    *   @OA\Schema(type="string")
-    * ),
+    *      @OA\RequestBody(
+    *          required=true,
+    *          @OA\MediaType(mediaType="multipart/form-data",
+    *              @OA\Schema(
+    *           required={"name","email","password","country"},
+    *           @OA\Property(
+    *               property="name",
+    *               type="string",
+    *               description="Nombre"
+    *           ),
+    *           @OA\Property(
+    *               property="email",
+    *               type="string",
+    *               description="Email"
+    *           ),
+    *           @OA\Property(
+    *               property="password",
+    *               type="string",
+    *               description="Contraseña"
+    *           ),
+    *           @OA\Property(
+    *               property="country",
+    *               type="string",
+    *               description="País"
+    *           ),
+    *             )
+    *         )
+    *      ),
     *     @OA\Response(
     *         response=200,
     *         description="Registrar usuario y obtener sus datos."
@@ -109,8 +109,6 @@ class AuthController extends Controller
     *             )
     *         )
     *      ),
-    *
-    *
     *     @OA\Response(
     *         response=200,
     *         description="Autenticar usuario y obtener sus datos."

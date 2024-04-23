@@ -16,4 +16,9 @@ class Song extends Model
         'preview',
         'duration'
     ];
+
+    public function album()
+    {
+        return $this->hasOne(Album::class, 'id', 'album_id');
+    }
 }

@@ -16,4 +16,14 @@ class Album extends Model
         'duration',
         'release_date'
     ];
+
+    public function artist()
+    {
+        return $this->hasOne(Artist::class, 'id', 'artist_id');
+    }
+
+    public function songs()
+    {
+        return $this->hasMany(Song::class, 'album_id', 'id');
+    }
 }
